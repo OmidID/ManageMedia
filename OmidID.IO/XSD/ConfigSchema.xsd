@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ConfigSchema"
+    xmlns:vs="http://schemas.microsoft.com/Visual-Studio-Intellisense"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+ 
+  <xs:complexType name="BaseKeyElement">
+    <xs:attribute name="name" use="required" type="xs:string"></xs:attribute>
+  </xs:complexType>
+
+  <xs:attributeGroup name="BaseImageAttributes">
+    <xs:attribute name="width" type="xs:int" use="required"></xs:attribute>
+    <xs:attribute name="height" type="xs:int" use="required"></xs:attribute>
+    <xs:attribute name="x" type="xs:int" use="optional" default="0"></xs:attribute>
+    <xs:attribute name="y" type="xs:int" use="optional" default="0"></xs:attribute>
+    <xs:attribute name="alpha" type="xs:float" use="optional" default="1"></xs:attribute>
+    <xs:attribute name="resolutionX" type="xs:int" use="optional" default="96"></xs:attribute>
+    <xs:attribute name="resolutionY" type="xs:int" use="optional" default="96"></xs:attribute>
+    <xs:attribute name="changeResolution" type="xs:boolean" use="optional" default="false"></xs:attribute>
+    <xs:attribute name="zoom" use="optional" default="Zoom">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="Tile"></xs:enumeration>
+          <xs:enumeration value="Center"></xs:enumeration>
+          <xs:enumeration value="Stretch"></xs:enumeration>
+          <xs:enumeration value="Zoom"></xs:enumeration>
+          <xs:enumeration value="CenterIfNoZoom"></xs:enumeration>
+          <xs:enumeration value="Corp"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>      
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="SaveSettingAttributes">
+    <xs:attribute name="path" type="xs:string" use="optional" default="~/Upload"></xs:attribute>
+    <xs:attribute name="extentions" type="xs:string" use="optional" default="jpg,jpeg,png,bmp,gif,tif,tiff"></xs:attribute>
+    <xs:attribute name="maximumSize" type="xs:int" use="optional" default="1024"></xs:attribute>
+    <xs:attribute name="checkImageSetting" type="xs:boolean" use="optional" default="true"></xs:attribute>
+    <xs:attribute name="keepOrginalImage" type="xs:boolean" use="optional" default="true"></xs:attribute>
+    <xs:attribute name="customFileNameType" type="xs:string" use="optional"></xs:attribute>
+    <xs:attribute name="generateFileName" use="optional" default="Auto">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="GUID"></xs:enumeration>
+          <xs:enumeration value="Overwrite"></xs:enumeration>
+          <xs:enumeration value="Auto"></xs:enumeration>
+          <xs:enumeration value="Custom"></xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="BaseImageSetting">
+    <xs:complexContent>
+      <xs:extension base="BaseKeyElement">
+        <xs:attributeGroup ref="BaseImageAttributes"></xs:attributeGroup>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ForegroundType">
+    <xs:complexContent>
+      <xs:extension base="BaseImageSetting">
+        <xs:attribute name="path" type="xs:string" use="required"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="ImageSettingType">
+    <xs:complexContent>
+      <xs:extension base="BaseImageSetting">
+        <xs:choice maxOccurs="1" minOccurs="0">
+          <xs:element name="foreground" type="ForegroundType"></xs:element>
+        </xs:choice>
+        <xs:attribute name="background" type="xs:string" use="optional"></xs:attribute>
+        <xs:attribute name="saveImmidately" type="xs:boolean" use="optional" default="false"></xs:attribute>
+        <xs:attribute name="saveAs" use="optional" default="PNG">
+          <xs:simpleType>
+            <xs:restriction base="xs:NMTOKEN">
+              <xs:enumeration value="PNG"></xs:enumeration>
+              <xs:enumeration value="JPEG"></xs:enumeration>
+              <xs:enumeration value="BMP"></xs:enumeration>
+              <xs:enumeration value="GIF"></xs:enumeration>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SaveSettingType">
+    <xs:complexContent>
+      <xs:extension base="BaseKeyElement">
+        <xs:choice minOccurs="0" maxOccurs="1">
+          <xs:element name="imageSetting">
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="add" type="ImageSettingType"></xs:element>
+                <xs:element name="remove">
+                  <xs:complexType>
+                    <xs:attribute name="name" use="required" type="xs:string"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="clear"></xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+
+        <xs:attributeGroup ref="SaveSettingAttributes"></xs:attributeGroup>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="upload">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <xs:element name="items">
+          <xs:complexType>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+              <xs:element name="add" type="SaveSettingType"></xs:element>
+              <xs:element name="remove">
+                <xs:complexType>
+                  <xs:attribute name="name" use="required" type="xs:string"></xs:attribute>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear"></xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+      <xs:attribute name="default" type="xs:string" use="optional"></xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

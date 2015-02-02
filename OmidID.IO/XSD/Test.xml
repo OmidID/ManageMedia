@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<upload>
+  <items>
+    <add name="test">
+      <imageSetting>
+        <add name="aaa" width="22" height="2121" zoom="Corp"></add>
+      </imageSetting>
+    </add>
+  </items>
+</upload>
